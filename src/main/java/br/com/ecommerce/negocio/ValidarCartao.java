@@ -18,7 +18,7 @@ public class ValidarCartao implements IStrategy{
 		if(cartao.getNomeImpresso()==null || cartao.getNomeImpresso().equals("")) {
 			mensagem += "O nome impresso é obrigatório.";
 		}
-		if(cartao.getBandeira()==null || cartao.getBandeira().getBandeira()==null || cartao.getBandeira().getBandeira().equals("")) {
+		if(cartao.getBandeira()==null ) {
 			mensagem += "A bandeira do cartão é obrigatório.";
 		}
 		if(cartao.getCodigoSeguranca()==null || cartao.getCodigoSeguranca().equals("")) {

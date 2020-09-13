@@ -31,10 +31,7 @@ public class Cartao extends EntidadeDominio {
 	@Column(name="codigoSeguranca")
 	private String codigoSeguranca;
 	
-	@Embedded
-	@AttributeOverrides({
-		@AttributeOverride(name="bandeira",column=@Column(name="bandeira")),
-	})
+	@Column(name="bandeira")
 	private Bandeira bandeira;
 
 	public Cartao(TipoCartao tipoCartao, String numero, String validade, String nomeImpresso, String codigoSeguranca, Bandeira bandeira) {

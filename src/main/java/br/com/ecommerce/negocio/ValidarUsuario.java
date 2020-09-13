@@ -29,7 +29,7 @@ public class ValidarUsuario implements IStrategy{
 		}
 		boolean temMaiuscula = false;
 		for(char c: usuario.getSenha().toCharArray()) {
-			if(letrasMaiusculas.indexOf(c)>0){
+			if(letrasMaiusculas.indexOf(c)>=0){
 				temMaiuscula = true;
 				break;
 			}
@@ -39,7 +39,7 @@ public class ValidarUsuario implements IStrategy{
 		}
 		boolean temMinuscula = false;
 		for(char c: usuario.getSenha().toCharArray()) {
-			if(letrasMinusculas.indexOf(c)>0){
+			if(letrasMinusculas.indexOf(c)>=0){
 				temMinuscula = true;
 				break;
 			}
@@ -49,7 +49,7 @@ public class ValidarUsuario implements IStrategy{
 		}
 		boolean temEspecial = false;
 		for(char c: usuario.getSenha().toCharArray()) {
-			if(caractereEspecial.indexOf(c)>0){
+			if(caractereEspecial.indexOf(c)>=0){
 				temEspecial = true;
 				break;
 			}

@@ -78,13 +78,16 @@ public class ValidarCliente implements IStrategy {
 				mensagem += "É necessário ao menos um endereço de entrega.";
 			}
 		}
-		if(cliente.getCartao()==null || cliente.getCartao().isEmpty()) {
-			mensagem += "É necessário ao menos um cartão"; 
-		} else {
-			for(Cartao cartao: cliente.getCartao()) {
-				mensagem += vCartao.processar(cartao);
+		if(cliente.getId()>0) {
+			if(cliente.getCartao()==null || cliente.getCartao().isEmpty()) {
+				mensagem += "É necessário ao menos um cartão"; 
+			} else {
+				for(Cartao cartao: cliente.getCartao()) {
+					mensagem += vCartao.processar(cartao);
+				}
 			}
 		}
+		
 		 
 		return mensagem;
 	}
