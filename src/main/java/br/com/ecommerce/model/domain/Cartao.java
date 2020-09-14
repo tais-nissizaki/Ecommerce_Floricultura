@@ -3,8 +3,9 @@ package br.com.ecommerce.model.domain;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
 @Entity
@@ -32,6 +33,7 @@ public class Cartao extends EntidadeDominio {
 	private String codigoSeguranca;
 	
 	@Column(name="bandeira")
+	@Enumerated(EnumType.STRING)
 	private Bandeira bandeira;
 
 	public Cartao(TipoCartao tipoCartao, String numero, String validade, String nomeImpresso, String codigoSeguranca, Bandeira bandeira) {

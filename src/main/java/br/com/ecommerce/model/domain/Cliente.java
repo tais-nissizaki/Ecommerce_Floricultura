@@ -2,6 +2,7 @@ package br.com.ecommerce.model.domain;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -53,7 +54,7 @@ public class Cliente extends EntidadeDominio {
 	
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "idEndereco")
-	private List<Endereco> endereco;
+	private Set<Endereco> endereco;
 	
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "idTelefone")
@@ -166,11 +167,11 @@ public class Cliente extends EntidadeDominio {
 		this.ativo = ativo;
 	}
 
-	public List<Endereco> getEndereco() {
+	public Set<Endereco> getEndereco() {
 		return endereco;
 	}
 
-	public void setEndereco(List<Endereco> endereco) {
+	public void setEndereco(Set<Endereco> endereco) {
 		this.endereco = endereco;
 	}
 

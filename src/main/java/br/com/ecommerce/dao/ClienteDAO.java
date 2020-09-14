@@ -57,12 +57,11 @@ public class ClienteDAO implements IDAO {
 		Cliente cliente = (Cliente)entidade;
 		StringBuilder jpql = new StringBuilder();
 		jpql.append("select c from Cliente c ");
-		jpql.append("left join fetch c.endereco endereco ");
-		jpql.append("left join fetch c.usuario usuario ");
+		jpql.append("left join c.usuario ");
 		jpql.append("where 1=1 ");
 		
 		Map <String, Object> parametros= new HashMap<>();
-		if(cliente.getNome()!= null && !cliente.getNome().equals("")) {
+		if(cliente.getNome()!= null && cliente.getNome().getNome()!= null && !cliente.getNome().getNome().equals("")) {
 			jpql.append(" and c.nome= :nome ");
 			parametros.put("nome", cliente.getNome());
 		}

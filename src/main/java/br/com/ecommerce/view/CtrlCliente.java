@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.ecommerce.controle.AlterarUsuarioCommand;
 import br.com.ecommerce.controle.cliente.AlterarClienteCommand;
 import br.com.ecommerce.controle.cliente.ConsultarClienteCommand;
 import br.com.ecommerce.controle.cliente.InativarClienteCommand;
@@ -37,6 +38,9 @@ public class CtrlCliente {
 	private AlterarClienteCommand alterarCliCmd;
 	
 	@Autowired
+	private AlterarUsuarioCommand alterarUsuCmd;
+	
+	@Autowired
 	private InativarClienteCommand inativarCliCmd;
 	
 	@PostMapping
@@ -46,7 +50,7 @@ public class CtrlCliente {
 	}
 	
 	@GetMapping
-	public List <Cliente> consultarClientes(String txtNomeCliente, String txtCpf, String txtLogin, int idCliente){
+	public List <Cliente> consultarClientes(String txtNomeCliente, String txtCpf, String txtLogin, Integer idCliente){
 		
 		List<Cliente> clientes = new ArrayList<>();
 		
@@ -58,7 +62,10 @@ public class CtrlCliente {
 		cliente.setCpf(txtCpf);
 		usuario.setLogin(txtLogin);
 		cliente.setUsuario(usuario);
-		cliente.setId(idCliente);
+		if(idCliente!=null) {
+			cliente.setId(idCliente);
+		}
+		
 		
 		clientes = (List<Cliente>) consCliCmd.executar(cliente);
 		
@@ -70,6 +77,12 @@ public class CtrlCliente {
 		
 		cliente.setId(idCliente);
 		alterarCliCmd.executar(cliente);
+	}
+	
+	@PutMapping("/alterar-senha/{idUsuario}")
+	public void alterar(@PathVariable int idUsuario, @RequestBody Usuario usuario) {
+		usuario.setId(idUsuario);
+		alterarUsuCmd.executar(usuario);
 	}
 	
 	@PatchMapping("/{idCliente}/inativar")
