@@ -37,9 +37,11 @@ public class ValidarCliente implements IStrategy {
 	public String processar(EntidadeDominio entidade) {
 		Cliente cliente = (Cliente) entidade;
 		String mensagem ="";
-		mensagem += vCpf.processar(cliente);
-		mensagem += vExistencia.processar(cliente);
-		mensagem += vUsuario.processar(cliente.getUsuario());
+		if(cliente.getId() <=0) {
+			mensagem += vCpf.processar(cliente);
+			mensagem += vExistencia.processar(cliente);
+			mensagem += vUsuario.processar(cliente.getUsuario());
+		}
 		if(cliente.getNome()== null || cliente.getNome().equals("")) {
 			mensagem += "O nome é obrigatório";
 		}
@@ -78,15 +80,11 @@ public class ValidarCliente implements IStrategy {
 				mensagem += "É necessário ao menos um endereço de entrega.";
 			}
 		}
-		if(cliente.getId()>0) {
-			if(cliente.getCartao()==null || cliente.getCartao().isEmpty()) {
-				mensagem += "É necessário ao menos um cartão"; 
-			} else {
+			if(cliente.getCartao()!=null && !cliente.getCartao().isEmpty()) {
 				for(Cartao cartao: cliente.getCartao()) {
 					mensagem += vCartao.processar(cartao);
 				}
 			}
-		}
 		
 		 
 		return mensagem;

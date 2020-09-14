@@ -9,9 +9,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.ecommerce.dao.ClienteDAO;
+import br.com.ecommerce.dao.EnderecoDAO;
 import br.com.ecommerce.dao.IDAO;
 import br.com.ecommerce.dao.UsuarioDAO;
 import br.com.ecommerce.model.domain.Cliente;
+import br.com.ecommerce.model.domain.Endereco;
 import br.com.ecommerce.model.domain.EntidadeDominio;
 import br.com.ecommerce.model.domain.Usuario;
 import br.com.ecommerce.negocio.ComplementarDt;
@@ -22,6 +24,7 @@ import br.com.ecommerce.negocio.GerarLogCliente;
 import br.com.ecommerce.negocio.GerarLogUsuario;
 import br.com.ecommerce.negocio.IStrategy;
 import br.com.ecommerce.negocio.ValidarCliente;
+import br.com.ecommerce.negocio.ValidarEndereco;
 
 @Component
 public class Fachada implements IFachada{
@@ -39,10 +42,12 @@ public class Fachada implements IFachada{
 	
 	public Fachada(ComplementarDt compDtCad, CriarClassificacao criarClassificacao, Criptografar criptografar,	GerarLogCliente gLog, 
 		ValidarCliente vCliente, ClienteDAO cliDAO, CriptografarSenhaUsuario criptografarSenhaUsuario, GerarLogUsuario gLogUsuario,
-		UsuarioDAO usuDAO) {
+		UsuarioDAO usuDAO, ValidarEndereco vEndereco, EnderecoDAO endDAO) {
 		
 		List<IStrategy> rnsAntesCliente = new ArrayList<IStrategy>();
 		List<IStrategy> rnsAntesUsuario = new ArrayList<IStrategy>();
+		List<IStrategy> rnsAntesEndereco = new ArrayList<IStrategy>();
+		
 			
 		List<IStrategy> rnsDepoisCliente = new ArrayList<IStrategy>();
 		List<IStrategy> rnsDepoisUsuario = new ArrayList<IStrategy>();
@@ -57,6 +62,10 @@ public class Fachada implements IFachada{
 		rnsAntesUsuario.add(criptografarSenhaUsuario);
 		rnsAntesUsuario.add(compDtCad);
 		
+		//Lista de regras executadas antes da persistencia de usuario	
+				rnsAntesEndereco.add(vEndereco);
+				rnsAntesEndereco.add(compDtCad);
+		
 		//Lista de regras executadas depois da persistencia de cliente	
 		rnsDepoisCliente.add(gLog);
 		
@@ -68,9 +77,11 @@ public class Fachada implements IFachada{
 		
 		String nmCliente = Cliente.class.getName();
 		String nmUsuario = Usuario.class.getName();
+		String nmEndereco = Endereco.class.getName();
 				
 		mapaAntesPesistencia.put(nmCliente, rnsAntesCliente);
 		mapaAntesPesistencia.put(nmUsuario, rnsAntesUsuario);
+		mapaAntesPesistencia.put(nmEndereco, rnsAntesEndereco);
 		
 		
 		mapaDepoisPesistencia = new HashMap<String, List<IStrategy>>();
@@ -80,6 +91,7 @@ public class Fachada implements IFachada{
 		mapaDaos = new HashMap<String, IDAO>();
 		mapaDaos.put(nmCliente, cliDAO);
 		mapaDaos.put(nmUsuario, usuDAO);
+		mapaDaos.put(nmEndereco, endDAO);
 	
 		mapaAntesConsultar = new HashMap<String, List<IStrategy>>();
 		mapaDepoisConsultar = new HashMap<String, List<IStrategy>>();

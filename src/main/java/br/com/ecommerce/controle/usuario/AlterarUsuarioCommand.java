@@ -1,4 +1,4 @@
-package br.com.ecommerce.controle;
+package br.com.ecommerce.controle.usuario;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.ecommerce.controle.AlterarUsuarioCommand;
 import br.com.ecommerce.controle.cliente.AlterarClienteCommand;
 import br.com.ecommerce.controle.cliente.ConsultarClienteCommand;
 import br.com.ecommerce.controle.cliente.InativarClienteCommand;
 import br.com.ecommerce.controle.cliente.SalvarClienteCommand;
+import br.com.ecommerce.controle.endereco.AlterarEnderecoCommand;
+import br.com.ecommerce.controle.usuario.AlterarUsuarioCommand;
 import br.com.ecommerce.model.domain.Cliente;
+import br.com.ecommerce.model.domain.Endereco;
 import br.com.ecommerce.model.domain.Pessoa;
 import br.com.ecommerce.model.domain.Usuario;
 
@@ -39,6 +41,9 @@ public class CtrlCliente {
 	
 	@Autowired
 	private AlterarUsuarioCommand alterarUsuCmd;
+	
+	@Autowired
+	private AlterarEnderecoCommand alterarEndCmd;
 	
 	@Autowired
 	private InativarClienteCommand inativarCliCmd;
@@ -72,9 +77,8 @@ public class CtrlCliente {
 		return clientes;
 	}
 	
-	@PutMapping("/{idCliente}")
+	@PutMapping("/{idCliente}/alterar-identificacao")
 	public void alterar(@PathVariable int idCliente, @RequestBody Cliente cliente) {
-		
 		cliente.setId(idCliente);
 		alterarCliCmd.executar(cliente);
 	}
@@ -91,6 +95,11 @@ public class CtrlCliente {
 		Cliente cliente= new Cliente();
 		cliente.setId(idCliente);
 		inativarCliCmd.executar(cliente);
+	}
+	
+	@PutMapping("/{idCliente}/alterar-endereco")
+	public void alterarEndereco(@PathVariable int idCliente, @RequestBody Endereco endereco) {
+		alterarEndCmd.executar(endereco);
 	}
 	
 }
