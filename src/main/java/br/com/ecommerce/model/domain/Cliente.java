@@ -68,11 +68,14 @@ public class Cliente extends EntidadeDominio {
 	@JoinColumn(name = "idCartao")
 	private List<Cartao> cartao;
 	
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "idVenda")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cliente", targetEntity = Venda.class)
 	private List<Venda> venda;
 	
 	public Cliente() {
+	}
+	
+	public Cliente(Integer id) {
+		setId(id);
 	}
 
 	public Cliente(Pessoa nome, String cpf, Usuario usuario) {

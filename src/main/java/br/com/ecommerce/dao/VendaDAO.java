@@ -1,6 +1,7 @@
 package br.com.ecommerce.dao;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -12,14 +13,14 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.ecommerce.model.domain.EntidadeDominio;
-import br.com.ecommerce.model.domain.Produto;
+import br.com.ecommerce.model.domain.Venda;
 
 @Repository
-public class ProdutoDAO implements IDAO {
+public class VendaDAO implements IDAO{
 
-    @PersistenceContext
+	@PersistenceContext
     private EntityManager entityManager;
-	@Override
+	
 	public boolean salvar(EntidadeDominio entidade) {
 		try{
 			entityManager.persist(entidade);
@@ -54,32 +55,23 @@ public class ProdutoDAO implements IDAO {
 
 	@Override
 	public List<EntidadeDominio> consultar(EntidadeDominio entidade) {
-		Produto produto = (Produto)entidade;
+		Venda venda = (Venda)entidade;
 		StringBuilder jpql = new StringBuilder();
-		jpql.append("select p from Produto p ");
+		jpql.append("select v from Venda v ");
 		jpql.append("where 1=1 ");
-		
-		Map <String, Object> parametros= new HashMap<>();
-		if(produto.getNome()!= null && !produto.getNome().equals("")) {
-			jpql.append(" and p.nomeProduto= :nomeProduto ");
-			parametros.put("nomeProduto", produto.getNome());
+		Map<String, Object> params = new HashMap<>();
+		if(venda.getCliente()!=null && venda.getCliente().getId() > 0) {
+			jpql.append("and v.cliente.id = :idCliente ");
+			params.put("idCliente", venda.getCliente().getId());
 		}
-		if(produto.getId()> 0) {
-			jpql.append(" and p.id= :idProduto ");
-			parametros.put("idProduto", Integer.valueOf(produto.getId()));
-		}
-		
 		Query query = entityManager.createQuery(jpql.toString());
-		for(Entry<String, Object> entry: parametros.entrySet()) {
-			query.setParameter(entry.getKey(), entry.getValue());
+		if(!params.isEmpty()) {
+			Iterator<Entry<String, Object>> iterator = params.entrySet().iterator();
+			while(iterator.hasNext()) {
+				Entry<String, Object> entry=iterator.next();
+				query.setParameter(entry.getKey(), entry.getValue());
+			}
 		}
-		
 		return query.getResultList();
 	}
-
-	public Produto obterPorId(int id) {
-		return entityManager.find(Produto.class, id);
-		
-	}
-
 }

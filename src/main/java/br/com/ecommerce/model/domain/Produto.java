@@ -1,11 +1,19 @@
 package br.com.ecommerce.model.domain;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -18,22 +26,38 @@ import javax.persistence.Table;
 })
 public class Produto extends EntidadeDominio {
 	
-	@Column(name="codigoProduto")
-	private int codigo;
+	@Column(name="nome")
+	private String nome;
 	
-	@Column(name="nomeProduto")
-	private String nomeProduto;
+	@Column(name="urlFoto")
+	private String urlFoto;
+	
+	@Column(name="descricao")
+	private String descricao;
+	
+	@Column(name = "valor")
+	private BigDecimal valor; 
 	
 	@Column(name="ativo")
 	private boolean ativo;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "idLinhaProduto")
-	private LinhaProduto linhaProduto;
+	@Embedded
+	@AttributeOverrides({
+		@AttributeOverride(name="largura",column=@Column(name="largura")),
+		@AttributeOverride(name="altura",column=@Column(name="altura")),
+		@AttributeOverride(name="diametro",column=@Column(name="diametro")),
+	})
+	private Dimensoes dimensoes;
+	
+	@ElementCollection(targetClass = Categoria.class)
+	@JoinTable(name = "produto_categoria", joinColumns = @JoinColumn(name = "idProduto"))
+	@Enumerated(EnumType.STRING)
+	@Column(name = "categoria")
+	private List <Categoria> categorias;
 	
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "idFichaTecnica")
-	private FichaTecnica fichaTecnica;
+	@JoinColumn(name = "idGrupo")
+	private GrupoPreco grupoPreco;
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "idItemDeCompra")
@@ -44,57 +68,24 @@ public class Produto extends EntidadeDominio {
 	private ItemEmEstoque itemEmEstoque;
 	
 	public Produto() {
-	}
-
-	public Produto(String nomeProduto, FichaTecnica fichaTecnica, LinhaProduto linhaProduto) {
-		this.nomeProduto = nomeProduto;
-		this.fichaTecnica = fichaTecnica;
-		this.linhaProduto = linhaProduto;
+		
 	}
 	
-	public Produto(int codigo, String nomeProduto, FichaTecnica fichaTecnica, LinhaProduto linhaProduto) {
-		this.codigo = codigo;
-		this.nomeProduto = nomeProduto;
-		this.fichaTecnica = fichaTecnica;
-		this.linhaProduto = linhaProduto;
+	public Produto(String nome, String descricao, List <Categoria> categorias) {
+		this.nome = nome;
+		this.descricao = descricao;
+		this.categorias = categorias;
+		
 	}
-	
-	public Produto(int codigo) {
-		this.codigo = codigo;
-	}
-	
-	public int getCodigo() {
-		return codigo;
+		
+	public String getNome() {
+		return nome;
 	}
 
-	public void setCodigo(int codigo) {
-		this.codigo = codigo;
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
-	public String getNomeProduto() {
-		return nomeProduto;
-	}
-
-	public void setNomeProduto(String nomeProduto) {
-		this.nomeProduto = nomeProduto;
-	}
-
-	public LinhaProduto getLinhaProduto() {
-		return linhaProduto;
-	}
-
-	public void setLinhaProduto(LinhaProduto linhaProduto) {
-		this.linhaProduto = linhaProduto;
-	}
-
-	public FichaTecnica getFichaTecnica() {
-		return fichaTecnica;
-	}
-
-	public void setFichaTecnica(FichaTecnica fichaTecnica) {
-		this.fichaTecnica = fichaTecnica;
-	}
-	
 	public ItemDeCompra getItemDeCompra() {
 		return itemDeCompra;
 	}
@@ -117,6 +108,54 @@ public class Produto extends EntidadeDominio {
 
 	public void setAtivo(boolean ativo) {
 		this.ativo = ativo;
+	}
+
+	public String getUrlFoto() {
+		return urlFoto;
+	}
+
+	public void setUrlFoto(String urlFoto) {
+		this.urlFoto = urlFoto;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+	public BigDecimal getValor() {
+		return valor;
+	}
+
+	public void setValor(BigDecimal valor) {
+		this.valor = valor;
+	}
+
+	public Dimensoes getDimensoes() {
+		return dimensoes;
+	}
+
+	public void setDimensoes(Dimensoes dimensoes) {
+		this.dimensoes = dimensoes;
+	}
+
+	public List<Categoria> getCategorias() {
+		return categorias;
+	}
+
+	public void setCategorias(List<Categoria> categorias) {
+		this.categorias = categorias;
+	}
+
+	public GrupoPreco getGrupoPreco() {
+		return grupoPreco;
+	}
+
+	public void setGrupoPreco(GrupoPreco grupoPreco) {
+		this.grupoPreco = grupoPreco;
 	}
 
 }

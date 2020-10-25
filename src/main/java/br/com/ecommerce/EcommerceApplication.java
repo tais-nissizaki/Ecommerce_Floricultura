@@ -8,9 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@SpringBootApplication(scanBasePackages = {"br.com.ecommerce", "br.com.ecommerce.model.domain", "br.com.ecommerce.dao"})
+@SpringBootApplication
 @EnableConfigurationProperties
-@EntityScan(basePackages = {"br.com.ecommerce.model.domain", "br.com.ecommerce.model"}) 
 public class EcommerceApplication {
 
 	public static void main(String[] args) {

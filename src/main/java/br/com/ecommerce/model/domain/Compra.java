@@ -18,8 +18,8 @@ import javax.persistence.TemporalType;
 public class Compra extends EntidadeDominio {
 	
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "idComprador")
-	private Comprador comprador;
+	@JoinColumn(name = "idFornecedor")
+	private Fornecedor fornecedor;
 	
 	@Column(name="valorTotal")
 	private double valorTotal;
@@ -28,17 +28,17 @@ public class Compra extends EntidadeDominio {
 	@Temporal(TemporalType.DATE)
 	private Date dtCompra;
 
-	public Compra(Comprador comprador, double valorTotal) {
-		this.comprador = comprador;
+	public Compra(Fornecedor fornecedor, double valorTotal) {
+		this.fornecedor = fornecedor;
 		this.valorTotal = valorTotal;
 	}
 
-	public Comprador getComprador() {
-		return comprador;
+	public Fornecedor getFornecedor() {
+		return fornecedor;
 	}
 
-	public void setComprador(Comprador comprador) {
-		this.comprador = comprador;
+	public void setFornecedor(Fornecedor fornecedor) {
+		this.fornecedor = fornecedor;
 	}
 	
 	public double getValorTotal() {

@@ -1,44 +1,54 @@
 package br.com.ecommerce.model.domain;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 @Entity
-@Table(name="compra")
+@Table(name="venda")
 @AttributeOverride(name = "id", column = @Column(name = "id"))
 public class Venda extends EntidadeDominio {
 	
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "idComprador")
-	private Comprador comprador;
+	@JoinColumn(name = "idCliente")
+	private Cliente cliente;
 	
 	@Column(name="valorTotal")
 	private double valorTotal;
 	
-	@Column(name="dtCompra")
-	@Temporal(TemporalType.DATE)
-	private Date dtCompra;
-
-	public Venda(Comprador comprador, double valorTotal) {
-		this.comprador = comprador;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "venda", fetch = FetchType.EAGER)
+	private List <ItemDeVenda> itensDeVenda;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status")
+	private StatusVenda status;
+	
+	public Venda () {
+	}
+	
+	public Venda(Cliente cliente, double valorTotal) {
+		this.cliente = cliente;
 		this.valorTotal = valorTotal;
+		this.status = StatusVenda.EM_PROCESSAMENTO;
 	}
 
-	public Comprador getComprador() {
-		return comprador;
+	public Cliente getCliente() {
+		return cliente;
 	}
 
-	public void setComprador(Comprador comprador) {
-		this.comprador = comprador;
+	public void setCliente(Cliente cliente) {
+		this.cliente = cliente;
 	}
 	
 	public double getValorTotal() {
@@ -49,12 +59,28 @@ public class Venda extends EntidadeDominio {
 		this.valorTotal = valorTotal;
 	}
 
-	public Date getDtCompra() {
-		return dtCompra;
+	public void adicionarItemDeVenda(ItemDeVenda itemDeVenda) {
+		if(this.itensDeVenda==null) {
+			this.itensDeVenda= new ArrayList();
+		}
+		this.itensDeVenda.add(itemDeVenda);	
+		
 	}
 
-	public void setDtCompra(Date dtCompra) {
-		this.dtCompra = dtCompra;
+	public List<ItemDeVenda> getItensDeVenda() {
+		return itensDeVenda;
 	}
-	
+
+	public void setItensDeVenda(List<ItemDeVenda> itensDeVenda) {
+		this.itensDeVenda = itensDeVenda;
+	}
+
+	public StatusVenda getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusVenda status) {
+		this.status = status;
+	}
+
 }

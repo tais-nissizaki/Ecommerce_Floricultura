@@ -11,15 +11,15 @@ import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 
+import br.com.ecommerce.model.domain.Carrinho;
 import br.com.ecommerce.model.domain.EntidadeDominio;
-import br.com.ecommerce.model.domain.Produto;
 
 @Repository
-public class ProdutoDAO implements IDAO {
+public class CarrinhoDAO implements IDAO{
 
-    @PersistenceContext
+	@PersistenceContext
     private EntityManager entityManager;
-	@Override
+	
 	public boolean salvar(EntidadeDominio entidade) {
 		try{
 			entityManager.persist(entidade);
@@ -43,32 +43,22 @@ public class ProdutoDAO implements IDAO {
 
 	@Override
 	public boolean inativar(EntidadeDominio entidade) {
-		try{
-			entityManager.merge(entidade);
-		}catch(Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
+		throw new RuntimeException("operação não permitida");
 	}
 
 	@Override
 	public List<EntidadeDominio> consultar(EntidadeDominio entidade) {
-		Produto produto = (Produto)entidade;
+		Carrinho carrinho = (Carrinho)entidade;
 		StringBuilder jpql = new StringBuilder();
-		jpql.append("select p from Produto p ");
+		jpql.append("select c from Carrinho c ");
 		jpql.append("where 1=1 ");
 		
 		Map <String, Object> parametros= new HashMap<>();
-		if(produto.getNome()!= null && !produto.getNome().equals("")) {
-			jpql.append(" and p.nomeProduto= :nomeProduto ");
-			parametros.put("nomeProduto", produto.getNome());
+		if(carrinho.getCliente()!= null && carrinho.getCliente().getId() > 0) {
+			jpql.append(" and c.cliente.id= :clienteId ");
+			parametros.put("clienteId", carrinho.getCliente().getId());
 		}
-		if(produto.getId()> 0) {
-			jpql.append(" and p.id= :idProduto ");
-			parametros.put("idProduto", Integer.valueOf(produto.getId()));
-		}
-		
+				
 		Query query = entityManager.createQuery(jpql.toString());
 		for(Entry<String, Object> entry: parametros.entrySet()) {
 			query.setParameter(entry.getKey(), entry.getValue());
@@ -77,9 +67,9 @@ public class ProdutoDAO implements IDAO {
 		return query.getResultList();
 	}
 
-	public Produto obterPorId(int id) {
-		return entityManager.find(Produto.class, id);
+	public void excluir(Carrinho carrinho) {
+		Carrinho carrinhoGerenciado = entityManager.find(Carrinho.class, carrinho.getId());
+		entityManager.remove(carrinhoGerenciado);
 		
 	}
-
 }

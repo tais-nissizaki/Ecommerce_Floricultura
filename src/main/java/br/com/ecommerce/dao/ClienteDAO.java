@@ -85,5 +85,9 @@ public class ClienteDAO implements IDAO {
 		
 		return query.getResultList();
 	}
+	
+	public Cliente obterPorId(Integer id) {
+		return entityManager.find(Cliente.class, id);
+	}
 
 }

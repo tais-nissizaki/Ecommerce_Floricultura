@@ -6,13 +6,13 @@ import br.com.ecommerce.model.domain.EntidadeDominio;
 import br.com.ecommerce.model.domain.Produto;
 
 @Component
-public class ValidarComprador implements IStrategy {
+public class ValidarFornecedor implements IStrategy {
 	@Override
 	public String processar(EntidadeDominio entidade) {
 		Produto produto = (Produto) entidade;
 		String mensagem ="";
-		if(produto.getItemDeCompra().getCompra().getComprador() == null || produto.getItemDeCompra().getCompra().getComprador().getNomeComprador() == "" ) {
-			mensagem += "O comprador � obrigat�rio.";
+		if(produto.getItemDeCompra().getCompra().getFornecedor() == null || produto.getItemDeCompra().getCompra().getFornecedor().getNomeFornecedor() == "" ) {
+			mensagem += "O fornecedor é obrigatório.";
 		}
 		return mensagem;
 	}
