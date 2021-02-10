@@ -1,6 +1,7 @@
 package br.com.ecommerce.model.domain;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.AttributeOverride;
@@ -31,10 +32,11 @@ import javax.persistence.Table;
 	private List <ItemDeCarrinho> itensDeCarrinho;
 	
 	public Carrinho () {
-		
+		setDtCadastro(new Date());
 	}
 	
 	public Carrinho(Cliente cliente) {
+		this();
 		this.cliente = cliente;
 	}
 
@@ -58,6 +60,7 @@ import javax.persistence.Table;
 		if(this.itensDeCarrinho == null ) {
 			this.itensDeCarrinho = new ArrayList();
 		}
+		itemDeCarrinho.setCarrinho(this);
 		this.itensDeCarrinho.add(itemDeCarrinho);
 	}
 

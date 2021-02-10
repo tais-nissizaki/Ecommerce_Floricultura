@@ -11,10 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.ecommerce.dao.ClienteDAO;
 import br.com.ecommerce.dao.EnderecoDAO;
 import br.com.ecommerce.dao.IDAO;
+import br.com.ecommerce.dao.ProdutoDAO;
 import br.com.ecommerce.dao.UsuarioDAO;
 import br.com.ecommerce.model.domain.Cliente;
 import br.com.ecommerce.model.domain.Endereco;
 import br.com.ecommerce.model.domain.EntidadeDominio;
+import br.com.ecommerce.model.domain.Produto;
 import br.com.ecommerce.model.domain.Usuario;
 import br.com.ecommerce.negocio.ComplementarDt;
 import br.com.ecommerce.negocio.CriarClassificacao;
@@ -28,7 +30,7 @@ import br.com.ecommerce.negocio.ValidarEndereco;
 
 @Component
 public class Fachada implements IFachada{
-	private Map<String, List<IStrategy>> mapaAntesPesistencia;
+	private Map<String, List<IStrategy>> mapaAntesPersistencia;
 	private Map<String, List<IStrategy>> mapaDepoisPesistencia;
 	
 	private Map<String, List<IStrategy>> mapaAntesInativar;
@@ -42,7 +44,7 @@ public class Fachada implements IFachada{
 	
 	public Fachada(ComplementarDt compDtCad, CriarClassificacao criarClassificacao, Criptografar criptografar,	GerarLogCliente gLog, 
 		ValidarCliente vCliente, ClienteDAO cliDAO, CriptografarSenhaUsuario criptografarSenhaUsuario, GerarLogUsuario gLogUsuario,
-		UsuarioDAO usuDAO, ValidarEndereco vEndereco, EnderecoDAO endDAO) {
+		UsuarioDAO usuDAO, ValidarEndereco vEndereco, EnderecoDAO endDAO, ProdutoDAO prodDAO) {
 		
 		List<IStrategy> rnsAntesCliente = new ArrayList<IStrategy>();
 		List<IStrategy> rnsAntesUsuario = new ArrayList<IStrategy>();
@@ -72,16 +74,17 @@ public class Fachada implements IFachada{
 		//Lista de regras executadas depois da persistencia de cliente	
 		rnsDepoisUsuario.add(gLogUsuario);
 				
-		mapaAntesPesistencia = new HashMap<String, List<IStrategy>>();
+		mapaAntesPersistencia = new HashMap<String, List<IStrategy>>();
 		
 		
 		String nmCliente = Cliente.class.getName();
 		String nmUsuario = Usuario.class.getName();
 		String nmEndereco = Endereco.class.getName();
+		String nmProduto = Produto.class.getName();
 				
-		mapaAntesPesistencia.put(nmCliente, rnsAntesCliente);
-		mapaAntesPesistencia.put(nmUsuario, rnsAntesUsuario);
-		mapaAntesPesistencia.put(nmEndereco, rnsAntesEndereco);
+		mapaAntesPersistencia.put(nmCliente, rnsAntesCliente);
+		mapaAntesPersistencia.put(nmUsuario, rnsAntesUsuario);
+		mapaAntesPersistencia.put(nmEndereco, rnsAntesEndereco);
 		
 		
 		mapaDepoisPesistencia = new HashMap<String, List<IStrategy>>();
@@ -92,6 +95,7 @@ public class Fachada implements IFachada{
 		mapaDaos.put(nmCliente, cliDAO);
 		mapaDaos.put(nmUsuario, usuDAO);
 		mapaDaos.put(nmEndereco, endDAO);
+		mapaDaos.put(nmProduto,  prodDAO);
 	
 		mapaAntesConsultar = new HashMap<String, List<IStrategy>>();
 		mapaDepoisConsultar = new HashMap<String, List<IStrategy>>();
@@ -105,7 +109,7 @@ public class Fachada implements IFachada{
 	@Transactional
 	public String salvar(EntidadeDominio entidade) {
 		String nmClass = entidade.getClass().getName();
-		List<IStrategy> rnsAntes = mapaAntesPesistencia.get(nmClass);
+		List<IStrategy> rnsAntes = mapaAntesPersistencia.get(nmClass);
 		
 		StringBuilder sb = executarStrategies(rnsAntes, entidade);		
 		
@@ -142,7 +146,7 @@ public class Fachada implements IFachada{
 	@Transactional
 	public  String alterar(EntidadeDominio entidade) {
 		String nmClass = entidade.getClass().getName();
-		List<IStrategy> rnsAntes = mapaAntesPesistencia.get(nmClass);
+		List<IStrategy> rnsAntes = mapaAntesPersistencia.get(nmClass);
 		
 		StringBuilder sb = executarStrategies(rnsAntes, entidade);		
 		

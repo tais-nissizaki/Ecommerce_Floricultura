@@ -28,42 +28,68 @@ public class CarrinhoCommand {
 	private CarrinhoDAO carrinhoDAO;
 	
 	@Transactional
-	public void adicionar(Produto produto, Integer qtd, Integer idCliente) {
-		Cliente cliente = clienteDAO.obterPorId(idCliente);
-		ItemDeCarrinho itemDeCarrinho = new ItemDeCarrinho(qtd, produto);
-		Carrinho carrinho = new Carrinho();
-		carrinho.setCliente(cliente);
+	public Integer adicionar(Produto produto, Integer qtd, Integer idCliente, Integer idCarrinho) {
+		Cliente cliente = null;
+		if(idCliente != null) {
+			cliente = clienteDAO.obterPorId(idCliente);
+		}
+
+		ItemDeCarrinho itemDeCarrinho = new ItemDeCarrinho(qtd);
 		List<EntidadeDominio> produtos = produtoDAO.consultar(produto);
 		if(produtos != null && !produtos.isEmpty()) {
 			itemDeCarrinho.setProduto((Produto)produtos.get(0));
 		}
-		List<EntidadeDominio> carrinhos = carrinhoDAO.consultar(carrinho);
-		if(carrinhos == null || carrinhos.isEmpty()) {
+		
+		Carrinho carrinho = null;
+		
+		if(idCarrinho == null) {
+			carrinho = new Carrinho();
+			carrinho.setCliente(cliente);
 			carrinho.adicionarItemDeCarrinho(itemDeCarrinho);
-			itemDeCarrinho.setCarrinho(carrinho);
-			carrinhoDAO.salvar(carrinho);
-			
+			carrinhoDAO.salvar(carrinho);			
 		} else {
-			carrinho = (Carrinho) carrinhos.get(0);
-			carrinho.adicionarItemDeCarrinho(itemDeCarrinho);
-			carrinhoDAO.alterar(carrinho);
+			carrinho = carrinhoDAO.consultarPorId(idCarrinho);
+			if(carrinho == null) {
+				carrinho = new Carrinho();
+				carrinho.setCliente(cliente);
+			}
+			boolean encontrou = false;
+			for (int i=0; i < carrinho.getItensDeCarrinho().size(); i++ ) {
+				ItemDeCarrinho itemDeCarrinhoGravado = carrinho.getItensDeCarrinho().get(i);
+				if(itemDeCarrinhoGravado.getProduto().getId() == produto.getId()) {
+					itemDeCarrinhoGravado.adicionaQuantidade(qtd);
+					carrinhoDAO.alterar(carrinho);
+					encontrou = true;
+					break;
+				}
+			}
+			if(!encontrou) {				
+				carrinho.adicionarItemDeCarrinho(itemDeCarrinho);
+				carrinhoDAO.alterar(carrinho);
+			}
+			
 		}
+		
+		return carrinho.getId();
 	}
 
 	@Transactional(readOnly = true)
-	public Carrinho obterCarrinho(Integer idCliente) {
+	public Carrinho obterCarrinho(int idCarrinho, int idCliente) {
 		Cliente cliente = new Cliente(idCliente);
 		Carrinho carrinho = new Carrinho(cliente);
+		carrinho.setId(idCarrinho);
 		List <EntidadeDominio> carrinhos = carrinhoDAO.consultar(carrinho);
 		if(carrinhos != null && !carrinhos.isEmpty()) {
 			Carrinho carrinhoRetorno = (Carrinho) carrinhos.get(0);
 			for (int i=0; i< carrinhoRetorno.getItensDeCarrinho().size(); i++) {
-				carrinhoRetorno.getCliente().setUsuario(null);
-				carrinhoRetorno.getCliente().setEndereco(null);
-				carrinhoRetorno.getCliente().setTransacao(null);
-				carrinhoRetorno.getCliente().setTelefone(null);
-				carrinhoRetorno.getCliente().setVenda(null);
-				carrinhoRetorno.getCliente().setCartao(null);
+				if(carrinhoRetorno.getCliente() != null) {
+					carrinhoRetorno.getCliente().setUsuario(null);
+					carrinhoRetorno.getCliente().setEndereco(null);
+					carrinhoRetorno.getCliente().setTransacao(null);
+					carrinhoRetorno.getCliente().setTelefone(null);
+					carrinhoRetorno.getCliente().setVenda(null);
+					carrinhoRetorno.getCliente().setCartao(null);
+				}
 				carrinhoRetorno.getItensDeCarrinho().get(i).setCarrinho(null);
 				carrinhoRetorno.getItensDeCarrinho().get(i).getProduto().setItemDeCompra(null);
 				carrinhoRetorno.getItensDeCarrinho().get(i).getProduto().setItemEmEstoque(null);
@@ -73,5 +99,35 @@ public class CarrinhoCommand {
 			return null;
 		}
 	}	
+	
+	@Transactional
+	public Carrinho adicionarQuantidadeItemDeCarrinho(Integer idCarrinho, Produto produto, Integer quantidade) {
+		Carrinho carrinho = carrinhoDAO.consultarPorId(idCarrinho);
+		if(carrinho != null) {
+			for(int i=0; i < carrinho.getItensDeCarrinho().size(); i++) {
+				ItemDeCarrinho itemDeCarrinho = carrinho.getItensDeCarrinho().get(i);
+				if(produto.getId() == itemDeCarrinho.getProduto().getId()) {
+					itemDeCarrinho.setQuantidade(quantidade);
+				}
+			}
+		}
+		carrinhoDAO.alterar(carrinho);
+		return carrinho;
+	}
+
+	@Transactional
+	public Carrinho removerItemDeCarrinho(Integer idCarrinho, Integer produtoId) {
+		Carrinho carrinho = carrinhoDAO.consultarPorId(idCarrinho);
+		if(carrinho != null) {
+			for(int i=0; i < carrinho.getItensDeCarrinho().size(); i++) {
+				ItemDeCarrinho itemDeCarrinho = carrinho.getItensDeCarrinho().get(i);
+				if(produtoId == itemDeCarrinho.getProduto().getId()) {
+					carrinho.getItensDeCarrinho().remove(i);
+					carrinhoDAO.excluirItemDeCarrinho(itemDeCarrinho);
+				}
+			}
+		}
+		return carrinho;
+	}
 	
 }

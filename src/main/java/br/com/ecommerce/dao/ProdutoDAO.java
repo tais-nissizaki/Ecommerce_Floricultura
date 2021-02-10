@@ -61,8 +61,8 @@ public class ProdutoDAO implements IDAO {
 		
 		Map <String, Object> parametros= new HashMap<>();
 		if(produto.getNome()!= null && !produto.getNome().equals("")) {
-			jpql.append(" and p.nomeProduto= :nomeProduto ");
-			parametros.put("nomeProduto", produto.getNome());
+			jpql.append(" and p.nome= :nome ");
+			parametros.put("nome", produto.getNome());
 		}
 		if(produto.getId()> 0) {
 			jpql.append(" and p.id= :idProduto ");

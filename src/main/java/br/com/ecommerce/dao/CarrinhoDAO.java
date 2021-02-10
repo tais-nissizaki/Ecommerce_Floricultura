@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.ecommerce.model.domain.Carrinho;
 import br.com.ecommerce.model.domain.EntidadeDominio;
+import br.com.ecommerce.model.domain.ItemDeCarrinho;
 
 @Repository
 public class CarrinhoDAO implements IDAO{
@@ -33,7 +34,7 @@ public class CarrinhoDAO implements IDAO{
 	@Override
 	public boolean alterar(EntidadeDominio entidade) {
 		try{
-			entityManager.merge(entidade);
+			entidade = entityManager.merge(entidade);
 		}catch(Exception e) {
 			e.printStackTrace();
 			return false;
@@ -54,11 +55,17 @@ public class CarrinhoDAO implements IDAO{
 		jpql.append("where 1=1 ");
 		
 		Map <String, Object> parametros= new HashMap<>();
-		if(carrinho.getCliente()!= null && carrinho.getCliente().getId() > 0) {
-			jpql.append(" and c.cliente.id= :clienteId ");
-			parametros.put("clienteId", carrinho.getCliente().getId());
+
+		if(carrinho.getId() > 0) {
+			jpql.append(" and c.id= :idCarrinho ");
+			parametros.put("idCarrinho", carrinho.getId());
+		}else {
+			if(carrinho.getCliente()!= null && carrinho.getCliente().getId() > 0) {
+				jpql.append(" and c.cliente.id= :clienteId ");
+				parametros.put("clienteId", carrinho.getCliente().getId());
+			}
 		}
-				
+		
 		Query query = entityManager.createQuery(jpql.toString());
 		for(Entry<String, Object> entry: parametros.entrySet()) {
 			query.setParameter(entry.getKey(), entry.getValue());
@@ -66,10 +73,19 @@ public class CarrinhoDAO implements IDAO{
 		
 		return query.getResultList();
 	}
+	
+
+	public Carrinho consultarPorId(int idCarrinho) {
+		return entityManager.find(Carrinho.class, idCarrinho);
+	}
 
 	public void excluir(Carrinho carrinho) {
 		Carrinho carrinhoGerenciado = entityManager.find(Carrinho.class, carrinho.getId());
-		entityManager.remove(carrinhoGerenciado);
-		
+		entityManager.remove(carrinhoGerenciado);	
+	}
+	
+	public void excluirItemDeCarrinho(ItemDeCarrinho itemDeCarrinho) {
+		ItemDeCarrinho itemDeCarrinhoGerenciado = entityManager.find(ItemDeCarrinho.class, itemDeCarrinho.getId());
+		entityManager.remove(itemDeCarrinhoGerenciado);
 	}
 }

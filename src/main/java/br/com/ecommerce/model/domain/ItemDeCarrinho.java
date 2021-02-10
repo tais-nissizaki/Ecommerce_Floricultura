@@ -1,5 +1,7 @@
 package br.com.ecommerce.model.domain;
 
+import java.util.Date;
+
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
@@ -23,7 +25,7 @@ public class ItemDeCarrinho extends EntidadeDominio {
 	@Column(name="quantidade")
 	private int quantidade;
 	
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
 	@JoinColumn(name = "idCarrinho")
 	private Carrinho carrinho;
 	
@@ -32,11 +34,16 @@ public class ItemDeCarrinho extends EntidadeDominio {
 	private Produto produto;
 	
 	public ItemDeCarrinho() {
-		
+		setDtCadastro(new Date());
+	}
+
+	public ItemDeCarrinho(int quantidade) {
+		this();
+		this.quantidade = quantidade;
 	}
 
 	public ItemDeCarrinho(int quantidade, Produto produto) {
-		this.quantidade = quantidade;
+		this(quantidade);
 		this.produto = produto;
 	}
 
@@ -62,5 +69,9 @@ public class ItemDeCarrinho extends EntidadeDominio {
 
 	public void setCarrinho(Carrinho carrinho) {
 		this.carrinho = carrinho;
+	}
+	
+	public void adicionaQuantidade(int quantidade) {
+		this.quantidade += quantidade;
 	}
 }
